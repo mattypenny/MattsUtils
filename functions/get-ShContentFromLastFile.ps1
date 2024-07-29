@@ -6,7 +6,7 @@ function get-ShContentFromLastFile {
         Longer description
 
 
-    .PARAMETER
+    .PARAMETER FileSpecification
         Filespec e.g. c:\temp\*.log
     .EXAMPLE
         get-Shcontentfromlastfile c:\temp\*.log

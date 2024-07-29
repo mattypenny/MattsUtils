@@ -1,7 +1,7 @@
 function Get-MTPGitAddAndRemoveCommands {
 <#
 .Synopsis
-Generates a 'git add' or 'git rm' command for everything that has been changed but not added or removed and not rm-ed
+Generates a 'git add' or 'git rm' commands for folder
 .DESCRIPTION
 .EXAMPLE
 ggac

@@ -1,14 +1,12 @@
-﻿function get-MtpComputerUsers {
-    <#
-    .SYNOPSIS
-        Get local users of computer (windows powershell oonly)
-    .DESCRIPTION
-        Longer description
-    .PARAMETER
-
-    .EXAMPLE
-        Example of how to use this cmdlet
-    #>
+﻿<#
+.SYNOPSIS
+    Get local users of computer (windows powershell oonly)
+.DESCRIPTION
+    Longer description
+.EXAMPLE
+    Example of how to use this cmdlet
+#>
+function get-MtpComputerUsers {
         [CmdletBinding()]
         Param
             (
