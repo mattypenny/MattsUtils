@@ -1,4 +1,8 @@
 function get-ShGeneratedSplatLines {
+    <#
+    .SYNOPSIS
+        Generate splat command for a specified function
+    #>
     [CmdletBinding()]
     param (
         [string]$Function = "get-service"
@@ -23,8 +27,8 @@ function get-ShGeneratedSplatLines {
     'PipelineVariable',
     'WhatIf',
     'Confirm'
-    
-    
+
+
     ForEach ($P in $Parameters.Keys) {
         [string]$Key = $P
 

@@ -1,7 +1,7 @@
 function get-MTPHistory {
     <#
     .SYNOPSIS
-      Search through history
+      Search through history (alias hh)
     #>
     [CmdletBinding()]
     Param ($Pattern = "*",

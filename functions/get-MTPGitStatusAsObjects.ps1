@@ -1,4 +1,8 @@
 function get-MTPGitStatusAsObjects
+<#
+.SYNOPSIS
+    reformat git outpur as an object
+#>
 {
     [CmdletBinding()]
      Param

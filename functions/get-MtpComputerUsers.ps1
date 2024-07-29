@@ -1,7 +1,7 @@
 ﻿function get-MtpComputerUsers {
     <#
     .SYNOPSIS
-        One-line description
+        Get local users of computer (windows powershell oonly)
     .DESCRIPTION
         Longer description
     .PARAMETER

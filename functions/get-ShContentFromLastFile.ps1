@@ -1,11 +1,11 @@
 function get-ShContentFromLastFile {
     <#
     .SYNOPSIS
-        Show content of last file for filespec
+        Show content of last file for filespec (alias gcflf)
     .DESCRIPTION
         Longer description
-        
-    
+
+
     .PARAMETER
         Filespec e.g. c:\temp\*.log
     .EXAMPLE

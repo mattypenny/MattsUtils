@@ -1,7 +1,7 @@
 function Select-MattsColumns {
     <#
 .SYNOPSIS
-    select hard-coded properties for a given object
+    select hard-coded properties for a given object (alias fm)
 #>
     [CmdletBinding()]
     param(

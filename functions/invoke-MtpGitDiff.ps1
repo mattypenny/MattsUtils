@@ -1,21 +1,21 @@
 function invoke-MtpGitDiff {
 <#
 .SYNOPSIS
-    xx
+    Git diff for all the files in a folder
 #>
     [CmdletBinding()]
     param (
         [string]$Folder = $(get-location)
     )
-    
+
     $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
-    
+
     write-startfunction
 
     foreach ($F in $(get-childitem $Folder)) {
 
         $Gitdiff = git diff $F
-        
+
         if ($Gitdiff) {
 
             [string]$Name = $F.Name
@@ -29,8 +29,8 @@ function invoke-MtpGitDiff {
     }
 
     write-endfunction
-    
-    
+
+
 }
 set-alias gitdiff invoke-MTPGitDiff
 

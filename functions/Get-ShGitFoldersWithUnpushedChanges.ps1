@@ -1,17 +1,17 @@
 function Get-ShGitFoldersWithUnpushedChanges {
 <#
 .SYNOPSIS
-    xx
+    look for unpushed files in git folders
 #>
     [CmdletBinding()]
     param (
         $ParameterFile = "$env:PsParametersFolder\GeneralParameters.csv"
     )
-    
+
     $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
-    
+
     write-startfunction
-    
+
     $RootFolders = import-csv -path $ParameterFile |
         where-object Program -eq 'Get-FoldersWithUnpushedChanges' |
         where-object Parameter -eq 'RootFolders'
@@ -44,7 +44,7 @@ function Get-ShGitFoldersWithUnpushedChanges {
             }
 
         }
-        
+
         if (!($MatchesExcludePattern)) {
 
             $Fullname
@@ -60,7 +60,7 @@ function Get-ShGitFoldersWithUnpushedChanges {
 
         set-location $F
         write-dbg "`$F: <$F>"
-        $DirtyFileLines = git status --porcelain 
+        $DirtyFileLines = git status --porcelain
 
         foreach ($D in $DirtyFileLines) {
             write-dbg "`$D: <$D>"
@@ -79,8 +79,8 @@ function Get-ShGitFoldersWithUnpushedChanges {
     set-location $OriginalLocation
 
     write-endfunction
-    
-    
+
+
 }
 
 set-alias ggacall Get-ShGitFoldersWithUnpushedChanges

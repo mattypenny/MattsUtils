@@ -1,20 +1,24 @@
 function Get-ShGeneratedPSCustomObjectFromObject {
+    <#
+    .SYNOPSIS
+        Generate a [PSCustomObject] for a specified object
+    #>
     [CmdletBinding()]
     param (
         $InputObject,
         $RightHandSidePrefix
     )
-    
+
     $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
-    
+
     write-startfunction
-    
+
     $Members = $InputObject | Get-Member | ? MemberType -like "*Property"
 
     $Text = @"
 [PSCustomObject]@{
 "@
-    
+
     foreach ($M in $Members) {
         [string]$Name = $M.Name
 
@@ -23,7 +27,7 @@ $Text
     $Name = `$$RightHandSidePrefix.$Name
 "@
     }
-    
+
     $Text = @"
 $Text
 }
@@ -31,7 +35,7 @@ $Text
 
 
     write-endfunction
-    
+
     return $Text
 }
 

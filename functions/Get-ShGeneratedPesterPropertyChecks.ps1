@@ -1,15 +1,19 @@
 function Get-ShGeneratedPesterPropertyChecks {
+    <#
+    .SYNOPSIS
+        Generate pester should be's for each property of a specified object
+    #>
     [CmdletBinding()]
     param (
         [string[]]$ObjectName,
         # $Object,
         $Property
     )
-    
+
     $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
-    
+
     write-startfunction
-    
+
     $ListOfProperties = $Property
 
     $Result = ""
@@ -21,13 +25,13 @@ $Result
 `$$Property | Should Be 'xx'
 
 "@
-        
+
 
     }
 
     write-endfunction
-    
+
     $Result
-    
+
 }
 

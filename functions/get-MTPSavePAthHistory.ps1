@@ -1,7 +1,7 @@
 function get-MTPSavePAthHistory {
     <#
     .SYNOPSIS
-      Search through history
+      Search through savepath history (alias hhh)
     #>
     [CmdletBinding()]
     Param ($Pattern = "*",
@@ -9,7 +9,7 @@ function get-MTPSavePAthHistory {
 
     [string]$HistoryFile = $(Get-PSReadLineOption).HistorySavePAth
     if ($Pattern -eq "*") {
-        get-content -tail $Tail 
+        get-content -tail $Tail
     }
     else {
         Select-string "$Pattern" $HistoryFile | select-object line

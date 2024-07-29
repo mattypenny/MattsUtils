@@ -1,9 +1,13 @@
 function Get-ShCommandDefinition {
+    <#
+    .SYNOPSIS
+        get the definition out of gcm (alias showme)
+    #>
     [CmdletBinding()]
     param (
-        $Command   
+        $Command
     )
-    
+
     foreach ($C in $(get-command "$Command")) {
 
         $RetrievedCommand = get-command $C

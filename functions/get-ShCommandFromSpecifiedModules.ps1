@@ -1,6 +1,10 @@
 function get-ShCommandFromSpecifiedModules {
+    <#
+    .SYNOPSIS
+        Get command for one module, defaulting to dbatools
+    #>
     [CmdletBinding()]
-    
+
     Param
     (
         # Param1 help description

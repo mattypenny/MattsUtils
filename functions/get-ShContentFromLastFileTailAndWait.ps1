@@ -1,11 +1,11 @@
 function get-ShContentFromLastFileTailAndWait {
     <#
     .SYNOPSIS
-       Show content of last file for filespec
+       Show content of last file for filespec (alias tflf)
     .DESCRIPTION
         Longer description
 
-    
+
     .PARAMETER
         Filespec e.g. c:\temp\*.log
     .EXAMPLE

@@ -1,4 +1,8 @@
 ﻿function Invoke-MTPGitDiffAddCommit {
+    <#
+    .SYNOPSIS
+        Git diff, add, commit and push for each file in a folder (alias gdac)
+    #>
 
     [CmdletBinding()]
 

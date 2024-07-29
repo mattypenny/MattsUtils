@@ -1,4 +1,8 @@
 function get-ShGeneratedParameterDebugLines {
+    <#
+    .SYNOPSIS
+        Generate write-debug lines for a call to a function
+    #>
     [CmdletBinding()]
     param (
         [string]$Function = "get-service"
@@ -22,7 +26,7 @@ function get-ShGeneratedParameterDebugLines {
     'PipelineVariable',
     'WhatIf',
     'Confirm'
-    
+
     $EscapeCharacter = '`'
     ForEach ($P in $Parameters.Keys) {
         [string]$Key = $P
