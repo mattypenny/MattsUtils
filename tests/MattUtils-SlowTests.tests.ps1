@@ -1,7 +1,7 @@
 ﻿Describe "The slow tests for mattsutils" {
     BeforeAll {
         Import-Module -Force MattsUtils
-        . C:\DevSoftware\powershell\modules\MattsUtils\tests\SetUpVariables.ps1
+        . $Env:PsRoot\modules\MattsUtils\tests\SetUpVariables.ps1
     }
 
 
