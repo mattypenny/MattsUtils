@@ -1,0 +1,62 @@
+<#
+.SYNOPSIS
+    A short one-line action-based description, e.g. 'Tests if a function is valid'
+.DESCRIPTION
+    A longer description of the function, its purpose, common use cases, etc.
+.NOTES
+    TODO: 
+    * handle pictures
+    * replace the shortened url with the expanded url
+    * work out why full text is truncated
+    * replace the expanded url with markdown link
+    * get it into a format it can be imported into micro.blog
+.LINK
+    Specify a URI to a help page, this will show when Get-Help -Online is used.
+.EXAMPLE
+    $Tweets = gc ./clean_tweets.json  | convertfrom-json
+    $t20 = $Tweets | ? tweet -like "*Nov 20*" | select -first 20
+    $T20 | Select-TweetStuff
+#>
+
+
+function Select-TweetStuff {
+    [cmdletbinding()]
+param(
+    [parameter(
+        Mandatory         = $true,
+        ValueFromPipeline = $true)]
+        $Tweet
+    )
+    process {
+        foreach ($T in $Tweet) {
+            $Top = $T | select -expand tweet
+            write-debug "Created <($top).created_at"
+
+            $Urls = foreach ($E in $($Top | select -expand entities)) {
+                
+                $E | select -expand urls
+
+            }
+            if ($Urls) {
+                [PSCustomObject]@{
+                    datetime = $Top.created_at
+                    Text = $Top.full_text  
+                    Short = $U.Url
+                    Expanded = $U.Expanded_url
+                    Display = $D.Display_url
+
+                }
+            } else {
+                [PSCustomObject]@{
+                    datetime = $Top.created_at
+                    Text = $Top.full_text  
+                    Short = $null
+                    Expanded = $null
+                    Display = $null
+
+                }
+
+            }
+    }
+}
+}
