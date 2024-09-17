@@ -1,8 +1,6 @@
 <#
 .SYNOPSIS
-    A short one-line action-based description, e.g. 'Tests if a function is valid'
-.DESCRIPTION
-    A longer description of the function, its purpose, common use cases, etc.
+    Possibly a collection of functions that will convert from json to powershell obkect to markdown files
 .NOTES
     TODO: 
     * handle pictures
@@ -29,12 +27,12 @@ param(
     )
     process {
         foreach ($T in $Tweet) {
-            $Top = $T | select -expand tweet
+            $Top = $T | Select-Object -expand tweet
             write-debug "Created <($top).created_at"
 
-            $Urls = foreach ($E in $($Top | select -expand entities)) {
+            $Urls = foreach ($E in $($Top | select-object -expand entities)) {
                 
-                $E | select -expand urls
+                $E | select-object -expand urls
 
             }
             if ($Urls) {
