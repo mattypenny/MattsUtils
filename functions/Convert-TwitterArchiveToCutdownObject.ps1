@@ -5,7 +5,7 @@
     TODO: 
     * handle pictures
     * replace the shortened url with the expanded url
-    * work out why full text is truncated
+    * 
     * replace the expanded url with markdown link
     * get it into a format it can be imported into micro.blog
 .LINK
@@ -36,13 +36,16 @@ param(
 
             }
             if ($Urls) {
+                foreach ($U in $Urls) {
+                    # change this to substitue the long url for te short one
                 [PSCustomObject]@{
                     datetime = $Top.created_at
                     Text = $Top.full_text  
                     Short = $U.Url
                     Expanded = $U.Expanded_url
-                    Display = $D.Display_url
+                    Display = $U.Display_url
 
+                }
                 }
             } else {
                 [PSCustomObject]@{
