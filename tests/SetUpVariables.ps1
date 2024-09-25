@@ -1,0 +1,1 @@
+﻿[string]$ComputerName = $(import-csv $env:PSParametersFolder\GeneralParameters.csv | ? parameter -eq 'Mu-ServerToPesterTestAgainst').value
