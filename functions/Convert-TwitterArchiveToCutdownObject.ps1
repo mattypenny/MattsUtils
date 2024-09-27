@@ -35,17 +35,21 @@ param(
                 $E | select-object -expand urls
 
             }
+            
             if ($Urls) {
+                [string]$Text = $Top.full_text
+                Write-Debug "Text <$Text>"
                 foreach ($U in $Urls) {
-                    # change this to substitue the long url for te short one
+                    [string]$Short = $U.Url
+                    [string]$Expanded = $U.Expanded_url
+                    Write-Debug "Short <$Short> Expanded <$Expanded>"
+                    $Text = $Text -replace $Short,$Expanded
+                    Write-Debug "Text <$Text>"
+                }
+
                 [PSCustomObject]@{
                     datetime = $Top.created_at
-                    Text = $Top.full_text  
-                    Short = $U.Url
-                    Expanded = $U.Expanded_url
-                    Display = $U.Display_url
-
-                }
+                    Text = $Text
                 }
             } else {
                 [PSCustomObject]@{
