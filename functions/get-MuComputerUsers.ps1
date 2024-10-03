@@ -1,72 +1,43 @@
 ﻿<#
 .SYNOPSIS
-    Get local users of computer (windows powershell oonly)
+    Get local users of computer (PowerShell 7 compatible)
 .DESCRIPTION
-    Longer description
+    Retrieves local users belonging to groups on the specified computer.
 .EXAMPLE
-    Example of how to use this cmdlet
+    Get-MuComputerUsers -ComputerName "server1"
 #>
-function get-MuComputerUsers {
-        [CmdletBinding()]
-        Param
-            (
-                [Parameter(Mandatory=$true,
-                           ValueFromPipelineByPropertyName=$true,
-                           Position=0)]
-                $ComputerName
+function Get-MuComputerUsers {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true,
+            Position = 0)]
+        [string] $ComputerName
+    )
 
-            )
 
-        $LocalUsers = @()
 
-        $ComputerNameList = $ComputerName
+    $GroupUser = Get-CimInstance -ClassName Win32_GroupUser -ComputerName $ComputerName
 
-        foreach ($ComputerName in $ComputerNameList)
-        {
-            write-verbose "========================================="
-            write-verbose "processing $ComputerName"
-
-            $Groups = Get-WmiObject -ComputerName $ComputerName -class win32_group -filter "Domain = '$ComputerName'"
-
-            foreach ($Group in $Groups)
-            {
-
-                write-verbose "  Processing Server <$ComputerName> Group <$($Group.name)>"
-                $users = get-wmiobject -ComputerName $ComputerName -query "select * from win32_groupuser where GroupComponent = `"Win32_Group.Domain='$ComputerName'`,Name='$($Group.name)'`""
-                [array]$UsersList = $Users.partcomponent
-                if ($users -eq $null)
-                {
-                    write-verbose "    no users in $($Group.name)"
-                }
-
-                Else
-                {
-                    foreach ($User in $UsersList)
-                    {
-
-                        $UsersList = $User.replace("Domain="," , ").replace(",Name=","\").replace("\\",",").replace('"','').split(",")
-                        $User = $UsersList[2]
-                        $User = $User.trim()
-
-                        write-verbose "    User $User in $($Group.name)"
-
-                        $LocalUsers += New-Object PSObject -Property @{
-                            ComputerName = $ComputerName
-                            Group = ($Group.name)
-                            Username = [string]$User
-                            }
-                    }
-                }
-            }
-
-            #     $LocalUsers | where-object computer -eq $ComputerName | select-object computer,group,users | Export-CSv -path $ServerCsvFile -NoTypeInformation
+    $GroupUser | Select-Object @{
+        Label      = "Group"
+        Expression = {
+            $_.GroupComponent -replace 'Win32_Group \(Domain = "', '' `
+                -replace '", Name = "', '\' `
+                -replace '"\)', ''
         }
-
-        $LocalUsersCount = $LocalUsers.count
-        write-verbose "`$LocalUsers : <$LocalUsers>"
-
-                $LocalUsers | sort-object -property ComputerName, Username, Group
-
+    },
+    @{
+        Label      = 'Part'
+        Expression = {
+            $_.PartComponent -replace 'Win32_', '' `
+                -replace '\(Domain = "', '' -replace '", Name = "', '\' `
+                -replace '"\)', '' `
+                -replace 'Group', '' `
+                -replace 'SystemAccount', '' `
+                -replace 'UserAccount'
+        }
     }
+}
 
-    set-alias get-MuLocalUsers get-MuComputerUsers
+Set-Alias Get-MuLocalUsers Get-MuComputerUsers
