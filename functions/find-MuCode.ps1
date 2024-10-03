@@ -9,7 +9,7 @@
         [Parameter(Mandatory=$False)][string]$RepoShortName,
         [Parameter(Mandatory=$False)][string]$RepoFolder,
         [Parameter()][ValidateSet('top','me','repo','nsg')]$Where = 'me',
-        [Parameter()][ValidateSet('short','veryshort','full')]$Output = 'veryshort'
+        [Parameter()][ValidateSet('short','veryshort','full','nameonly')]$Output = 'veryshort'
     )
 
     $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
@@ -56,6 +56,15 @@
                 },
                     LineNumber,
                     Line
+        }
+        'NameOnly' {
+            $Hits |
+                Select-Object Filename,
+                    LineNumber,
+                    Line
+            }
+        'Full' {
+            $Hits
         }
         Default { $hits}
     }
