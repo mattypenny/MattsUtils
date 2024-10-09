@@ -29,3 +29,7 @@
 
 
 }
+Set-Alias Get-MuComputer -Value Get-MuComputerNames
+Set-Alias Get-MuComputers -Value Get-MuComputerNames
+Set-Alias MuList -Value Get-MuComputerNames
+Set-Alias CList -Value Get-MuComputerNames
