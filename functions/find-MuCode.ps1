@@ -8,7 +8,7 @@
         [Parameter(Mandatory = $True)][string]$Pattern,
         [Parameter(Mandatory = $False, ParameterSetName = 'FolderCode')][string]$FolderCode,
         [Parameter(Mandatory = $False, ParameterSetName = 'Folders')][string]$Folder,
-        [Parameter(Mandatory = $False, ParameterSetName = 'ManyFoldersCode')][ValidateSet('AllRepos', 'MyBits', 'DefaultRepo', 'nsg')]$ManyFoldersCode = 'MyBits',
+        [Parameter(Mandatory = $False, ParameterSetName = 'ManyFoldersCode')][ValidateSet('AllRepos', 'MyBits', 'DefaultRepo', 'nsg', 'Island')]$ManyFoldersCode = 'MyBits',
         [Parameter(Mandatory = $False)][switch]$OutputFull,
         [Parameter(Mandatory = $False)][switch]$OutputVeryShort,
         [Parameter(Mandatory = $False)][switch]$OutputShort,
@@ -30,6 +30,9 @@
         }
         'Nsg' {
             $(Import-Csv $Env:PSParametersFolder\GeneralParameters.csv | Where-Object Parameter -EQ 'Fic-DefaultNsg').value
+        }
+        'Island' {
+            $(Import-Csv $Env:PSParametersFolder\GeneralParameters.csv | Where-Object Parameter -EQ 'Fic-Island').value
         }
         Default {
         }
