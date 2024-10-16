@@ -1,4 +1,4 @@
-﻿function Get-MuComputerNames {
+﻿function Get-MuComputer {
     <#
 .SYNOPSIS
     Gets names from AD
@@ -29,7 +29,7 @@
 
 
 }
-Set-Alias Get-MuComputer -Value Get-MuComputerNames
+Set-Alias Get-MuComputerNames -Value Get-MuComputers
 Set-Alias Get-MuComputers -Value Get-MuComputerNames
 Set-Alias MuList -Value Get-MuComputerNames
 Set-Alias CList -Value Get-MuComputerNames
