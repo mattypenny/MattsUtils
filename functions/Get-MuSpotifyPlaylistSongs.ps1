@@ -93,3 +93,84 @@ function Get-MuSpotifyPlaylistId {
    
    
 }
+
+function New-MuBlogPostFromSpotifySongs {
+<#
+.SYNOPSIS
+   xx
+#>
+   [CmdletBinding()]
+   param (
+   
+   )
+   
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+   write-startfunction
+   
+   
+   write-endfunction
+   
+   
+}
+
+function Copy-MuSpotifyImageToBlog {
+<#
+.SYNOPSIS
+   xx
+#>
+   [CmdletBinding()]
+   param (
+   
+   )
+   
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+   write-startfunction
+   
+   
+   write-endfunction
+   
+   
+}
+
+function Copy-MuSpotifyImageToComputer {
+<#
+.SYNOPSIS
+   xx
+#>
+   [CmdletBinding()]
+   param (
+   
+   )
+   
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+   write-startfunction
+   
+   
+   write-endfunction
+   
+   
+}
+
+function Copy-MuComputerImageToBlog {
+<#
+.SYNOPSIS
+   Returns location of image on blog website
+#>
+   [CmdletBinding()]
+   param (
+   
+   )
+   
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+   write-startfunction
+   
+   
+   write-endfunction
+   
+   
+}
+
