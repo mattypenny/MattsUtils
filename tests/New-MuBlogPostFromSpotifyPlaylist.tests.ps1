@@ -21,7 +21,10 @@ Describe "New-MuBlogPostFromSpotifySongs" {
         $BodyPath = '/tmp/spotify/test1.md'
         remove-item $BodyPath
 
-        $PostBody = Get-MuPostBody -songs $Songs -BodyPath $BodyPath
+$ImageFolderPath = '/tmp/spotify/images'
+mkdir $ImageFolderPath
+
+        $PostBody = Get-MuPostBody -songs $Songs -BodyPath $BodyPath -ImageFolderPath $ImageFolderPath
 
         Write-Host $PostBody
         

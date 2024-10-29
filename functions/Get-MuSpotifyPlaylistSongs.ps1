@@ -1,5 +1,5 @@
-function Generate-MuBlogPostFromSpotifyPlaylist {
-<#
+function New-MuBlogPostFromSpotifyPlaylist {
+   <#
 .SYNOPSIS
    xx
 #>
@@ -116,7 +116,7 @@ function Get-MuSpotifyPlaylistId {
 }
 
 function New-MuBlogPostFromSpotifySongs {
-<#
+   <#
 .SYNOPSIS
    xx
 #>
@@ -136,14 +136,16 @@ function New-MuBlogPostFromSpotifySongs {
 }
 
 function Get-MuPostBody {
-<#
+   <#
 .SYNOPSIS
    xx
 #>
    [CmdletBinding()]
    param (
-      [Parameter(Mandatory=$True)]$Songs,
-      [Parameter(Mandatory=$True)][string]$BodyPath
+      [Parameter(Mandatory = $True)]$Songs,
+      [Parameter(Mandatory = $True)][string]$BodyPath,
+      [Parameter(Mandatory = $True)][string]$ImageFolderPath
+
    )
    
    $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
@@ -151,15 +153,28 @@ function Get-MuPostBody {
    write-startfunction
    
    write-dbg "`$Songs count: <$($Songs.Length)>"
-   $PostBody=""
+   $PostBody = ""
    
    foreach ($S in $Songs) {
-      [string]$Artist    = $S.Artist
+      [string]$Artist = $S.Artist
       [string]$TrackName = $S.TrackNAme
-      [string]$MusicURL  = $S.MusicURL
-      [string]$Album     = $S.Album
-      [string]$ImageURL  = $S.Image
+      [string]$MusicURL = $S.MusicURL
+      [string]$Album = $S.Album
+      [string]$ImageURL = $S.ImageURL
+
+      write-dbg "`$TrackName: <$TrackName> `$Artist: <$Artist> `$ImageUrl: <$ImageUrl>"
    
+
+      $Params = @{
+         ImageFolderPath = $ImageFolderPath 
+         ImageURL        = $ImageURL 
+         Album           = $Album 
+         Artist          = $Artist
+      }
+      $SpotifyImage = get-MuSpotifyImage @Params
+
+
+
       <#
       <p>
 <img src="/tmp/spotify/ab67616d0000b273efd23057f80e32da5b1c0345.jpeg" alt="Smiley face" style="float:left;width:42px;height:42px;margin-right:10px">     <a href="https://open.spotify.com/track/22QMzoI3O7yNnttjKq9SfF">Draggin' the Line - Tommy James & The Shondells]</a> - xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sdsuhdushdushdushdu
@@ -169,7 +184,7 @@ function Get-MuPostBody {
 $PostBody
 <p>
    <img 
-      src="/tmp/spotify/ab67616d0000b273efd23057f80e32da5b1c0345.jpeg" 
+      src="$SpotifyImage" 
       alt="Cover of the Spotify 'album' - $Album"
       style="float:left;width:42px;height:42px;margin-right:10px">
    <a href=
@@ -191,15 +206,43 @@ $PostBody
    
 }
 
-function Output-MuPostBodyToFile {
+function get-MuSpotifyImage {
 <#
 .SYNOPSIS
    xx
 #>
    [CmdletBinding()]
    param (
-      [Parameter(Mandatory=$True)][string]$PostBody,
-      [Parameter(Mandatory=$True)][string]$BodyPath  
+      [Parameter(Mandatory=$True)][string] $ImageFolderPath ,
+         [Parameter(Mandatory=$True)][string] $ImageURL ,
+         [Parameter(Mandatory=$True)][string] $Album ,
+         [Parameter(Mandatory=$True)][string] $Artist
+   
+   )
+   
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+   write-startfunction
+   
+   $Extension = [System.io.path]::GetExtension( $ImageURL)
+   $OutFile = Join-Path $ImageFolderPath -ChildPath "$Artist - $Album$Extension"
+   Invoke-WebRequest -uri $ImageURL -outfile $OutFile
+   
+   write-endfunction
+
+   $Outfile
+   
+   
+}
+function Output-MuPostBodyToFile {
+   <#
+.SYNOPSIS
+   xx
+#>
+   [CmdletBinding()]
+   param (
+      [Parameter(Mandatory = $True)][string]$PostBody,
+      [Parameter(Mandatory = $True)][string]$BodyPath  
    )
    
    $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
@@ -214,12 +257,14 @@ function Output-MuPostBodyToFile {
 }
 
 function Copy-MuSpotifyImageToBlog {
-<#
+   <#
 .SYNOPSIS
    xx
 #>
    [CmdletBinding()]
    param (
+      $BlogKey = $(import-csv $PSParametersFolder/GeneralParameters.csv | Where-Object Parameter -eq 'BlogKey').value
+      [Parameter(Mandatory=$True)][string]$SpotifyImage
    
    )
    
@@ -227,14 +272,16 @@ function Copy-MuSpotifyImageToBlog {
    
    write-startfunction
    
+   write-dbg "`$BlogKey count: <$($BlogKey.Length)>"
    
+   !!!!see README
    write-endfunction
    
    
 }
 
 function Copy-MuSpotifyImageToComputer {
-<#
+   <#
 .SYNOPSIS
    xx
 #>
@@ -254,7 +301,7 @@ function Copy-MuSpotifyImageToComputer {
 }
 
 function Copy-MuComputerImageToBlog {
-<#
+   <#
 .SYNOPSIS
    Returns location of image on blog website
 #>
@@ -277,60 +324,60 @@ function write-startfunction {
    .SYNOPSIS
       xx
    #>
-      [CmdletBinding()]
-      param (
+   [CmdletBinding()]
+   param (
       
-      )
+   )
       
-      $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
       
       
       
-   }
+}
    
-   function write-endfunction {
+function write-endfunction {
    <#
    .SYNOPSIS
       xx
    #>
-      [CmdletBinding()]
-      param (
+   [CmdletBinding()]
+   param (
       
-      )
+   )
       
-      $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
       
       
       
-   }
+}
 function write-startfunction {
    <#
    .SYNOPSIS
       xx
    #>
-      [CmdletBinding()]
-      param (
+   [CmdletBinding()]
+   param (
       
-      )
+   )
       
-      $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
       
       
       
-   }
+}
    
-   function write-endfunction {
+function write-endfunction {
    <#
    .SYNOPSIS
       xx
    #>
-      [CmdletBinding()]
-      param (
+   [CmdletBinding()]
+   param (
       
-      )
+   )
       
-      $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
       
       
       
-   }
+}
