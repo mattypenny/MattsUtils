@@ -35,6 +35,7 @@ function Get-MuSpotifyPlaylistSongs {
    $PlaylistId = Get-MuSpotifyPlaylistId -PlaylistName $PlaylistName
    
    $PlayListItems = Get-PlaylistItems $PlaylistId
+
    write-dbg "`$PlayListItems count: <$($PlayListItems.Length)>"
 
    $PlayListItems = $PlayListItems |
@@ -207,16 +208,16 @@ $PostBody
 }
 
 function get-MuSpotifyImage {
-<#
+   <#
 .SYNOPSIS
    xx
 #>
    [CmdletBinding()]
    param (
-      [Parameter(Mandatory=$True)][string] $ImageFolderPath ,
-         [Parameter(Mandatory=$True)][string] $ImageURL ,
-         [Parameter(Mandatory=$True)][string] $Album ,
-         [Parameter(Mandatory=$True)][string] $Artist
+      [Parameter(Mandatory = $True)][string] $ImageFolderPath ,
+      [Parameter(Mandatory = $True)][string] $ImageURL ,
+      [Parameter(Mandatory = $True)][string] $Album ,
+      [Parameter(Mandatory = $True)][string] $Artist
    
    )
    
@@ -263,19 +264,33 @@ function Copy-MuSpotifyImageToBlog {
 #>
    [CmdletBinding()]
    param (
-      $BlogKey = $(import-csv $PSParametersFolder/GeneralParameters.csv | Where-Object Parameter -eq 'BlogKey').value
-      [Parameter(Mandatory=$True)][string]$SpotifyImage
-   
+      $BlogToken = $(import-csv $PSParametersFolder/GeneralParameters.csv | Where-Object Parameter -eq 'BlogKey').value,
+      [Parameter(Mandatory = $True)][string]$SpotifyImage
    )
    
    $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
    
    write-startfunction
    
-   write-dbg "`$BlogKey count: <$($BlogKey.Length)>"
+   write-dbg "`$BlogToken count: <$($BlogKey.Length)>"
    
-   !!!!see README
-   write-endfunction
+   $headers = @{
+      "Authorization" = "Bearer $BlogToken"
+   }
+   $response = Invoke-RestMethod -Uri "https://micro.blog/micropub?q=config" -Headers $headers
+   $mediaEndpoint = $response."media-endpoint"
+   $form = @{
+      file = Get-Item $imagePath
+   }
+   $uploadResponse = Invoke-RestMethod -Uri $mediaEndpoint -Method Post -Headers $headers -Form $form
+   $imageUrl = $uploadResponse.Location
+   write-endfunction$form = @{
+      file = Get-Item $imagePath
+   }
+   $uploadResponse = Invoke-RestMethod -Uri $mediaEndpoint -Method Post -Headers $headers -Form $form
+   $imageUrl = $uploadResponse.Location
+
+   return $imageUrl
    
    
 }
@@ -380,4 +395,29 @@ function write-endfunction {
       
       
       
+}
+
+function Get-MuParameter {
+   <#
+.SYNOPSIS
+   xx
+#>
+   [CmdletBinding()]
+   param (
+      $ParameterFile = "$PSParametersFolder/GeneralParameters.csv",
+      [Parameter(Mandatory = $True)][string]$Name
+
+   )
+   
+   $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+   write-startfunction
+   
+   $Value = $(import-csv $PSParametersFolder/GeneralParameters.csv | 
+      Where-Object Parameter -eq $Name).value
+   
+   write-endfunction
+
+   return $Value
+   
 }

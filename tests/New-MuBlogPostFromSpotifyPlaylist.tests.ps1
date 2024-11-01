@@ -17,14 +17,26 @@ Describe "New-MuBlogPostFromSpotifySongs" {
 
         $Songs = $csv | ConvertFrom-Csv
 
-        mkdir /tmp/spotify
-        $BodyPath = '/tmp/spotify/test1.md'
+        $WorkingFolder = Get-MuParameter -Name SpotifyWork
+
+        if (!(test-path $WorkingFolder)) {
+        mkdir $WorkingFolder
+        }
+
+        $BodyFolder = "$WorkingFolder/Body"
+        if (!(test-path $BodyFolder)) {
+        mkdir $BodyFolder
+        }
+
+        $BodyPath = "$bodyFolder/Test1.md"
         remove-item $BodyPath
 
-$ImageFolderPath = '/tmp/spotify/images'
-mkdir $ImageFolderPath
+        $ImagesFolder = "$WorkingFolder/Images"
+        if (!(test-path $ImagesFolder)) {
+        mkdir $ImagesFolder
+        }
 
-        $PostBody = Get-MuPostBody -songs $Songs -BodyPath $BodyPath -ImageFolderPath $ImageFolderPath
+        $PostBody = Get-MuPostBody -songs $Songs -BodyPath $BodyPath -ImageFolderPath $ImagesFolder
 
         Write-Host $PostBody
         
