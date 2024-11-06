@@ -20,23 +20,23 @@ Describe "New-MuBlogPostFromSpotifySongs" {
         $WorkingFolder = Get-MuParameter -Name SpotifyWork
 
         if (!(test-path $WorkingFolder)) {
-        mkdir $WorkingFolder
+        New-Item  -ItemType Directory -path  $WorkingFolder
         }
 
         $BodyFolder = "$WorkingFolder/Body"
         if (!(test-path $BodyFolder)) {
-        mkdir $BodyFolder
+        New-Item  -ItemType Directory -path  $BodyFolder
         }
 
         $BodyPath = "$bodyFolder/Test1.md"
         remove-item $BodyPath
 
-        $ImagesFolder = "$WorkingFolder/Images"
-        if (!(test-path $ImagesFolder)) {
-        mkdir $ImagesFolder
+        $imagesFolder = "$WorkingFolder/images"
+        if (!(test-path $imagesFolder)) {
+        New-Item  -ItemType Directory -path  $imagesFolder
         }
 
-        $PostBody = Get-MuPostBody -songs $Songs -BodyPath $BodyPath -ImageFolderPath $ImagesFolder
+        $PostBody = Get-MuPostBody -songs $Songs -BodyPath $BodyPath -ImageFolderPath $imagesFolder
 
         Write-Host $PostBody
         

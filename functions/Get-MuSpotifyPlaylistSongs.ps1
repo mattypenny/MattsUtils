@@ -60,7 +60,7 @@ function Get-MuSpotifyPlaylistSongs {
          Select-Object -first 1  # only expecting 1, but...
 
          $FirstImage = $Album |
-         Select-Object -ExpandProperty Images |
+         Select-Object -ExpandProperty images |
          Sort-Object -Property Width |
          Select-Object -Last 1
             
@@ -257,22 +257,22 @@ function Output-MuPostBodyToFile {
    
 }
 
-function Copy-MuSpotifyImageToBlog {
+function Copy-MuComputerImageToBlog {
    <#
 .SYNOPSIS
    xx
 #>
    [CmdletBinding()]
    param (
-      $BlogToken = $(import-csv $PSParametersFolder/GeneralParameters.csv | Where-Object Parameter -eq 'BlogKey').value,
-      [Parameter(Mandatory = $True)][string]$SpotifyImage
+      $BlogToken = $(import-csv $PSParametersFolder/GeneralParameters.csv | Where-Object Parameter -eq 'BlogToken').value,
+      [Parameter(Mandatory = $True)][string]$imagePath
    )
    
    $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
    
    write-startfunction
    
-   write-dbg "`$BlogToken count: <$($BlogKey.Length)>"
+   write-dbg "`$BlogToken count: <$($BlogToken.Length)>"
    
    $headers = @{
       "Authorization" = "Bearer $BlogToken"
@@ -283,12 +283,8 @@ function Copy-MuSpotifyImageToBlog {
       file = Get-Item $imagePath
    }
    $uploadResponse = Invoke-RestMethod -Uri $mediaEndpoint -Method Post -Headers $headers -Form $form
-   $imageUrl = $uploadResponse.Location
-   write-endfunction$form = @{
-      file = Get-Item $imagePath
-   }
-   $uploadResponse = Invoke-RestMethod -Uri $mediaEndpoint -Method Post -Headers $headers -Form $form
-   $imageUrl = $uploadResponse.Location
+   $imageUrl = $uploadResponse.Url
+   write-endfunction
 
    return $imageUrl
    
@@ -315,7 +311,7 @@ function Copy-MuSpotifyImageToComputer {
    
 }
 
-function Copy-MuComputerImageToBlog {
+function Copy-MuSpotifyImageToBlog {
    <#
 .SYNOPSIS
    Returns location of image on blog website
