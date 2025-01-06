@@ -46,6 +46,7 @@
         }
 
         write-dbg "`$Path: <$Path>"
+        Write-Host "Will be searching $P...."
 
         $Hits = Select-String -Pattern $Pattern -Path $(Get-ChildItem -Recurse $Path)
 
