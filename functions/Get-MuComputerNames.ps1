@@ -17,12 +17,23 @@
 
     foreach ($C in $ADComputers) {
         [string]$DnsHostName = $C.DNSHostName
+        write-dbg "`$DnsHostname: <$DnsHostname>"
 
-        $DnsRecord = Resolve-DnsName $DnsHostName
+        if (!($DnsHostname)) {
+            $DnsHostName = $C.Name
+        }
+        try {
+            $DnsRecord = Resolve-DnsName $DnsHostName -ErrorAction Stop
+            $IPAddress = $DnsRecord.IPAddress
+        }
+        catch {
+            $IPAddress = 'not found'
+
+        }
 
         [PSCustomObject]@{
             ComputerName = $C.DNSHostName
-            IPAddress    = $DnsRecord.IPAddress
+            IPAddress    = $IPAddress
         }
     }
     write-endfunction
