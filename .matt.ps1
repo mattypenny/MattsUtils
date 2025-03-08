@@ -9,25 +9,23 @@ $Username = $Env:UserName
 
 
 
-if ($IsLinux)
-{
+if ($IsLinux) {
     $WhereAmI = $LinuxHome
 }
-else 
-{
-    if ($Env:ComputerName -like "P*")
-    {
+else {
+    if ($Env:ComputerName -like "S*") {
         $WhereAmI = $WinWork
+        import-module WindowsStuff
+        import-module SqlStuff
+        
     }
-    else 
-    {
+    else {
         $WhereAmI = $WinHome    
     }
 }
 # Set up stuff specific to this particular PC or environment
 
-if ($WhereAmI -eq $LinuxHome)
-{
+if ($WhereAmI -eq $LinuxHome) {
     write-debug "Doing the Linux Home"
     $HomeMatt = '/home/matt'
     
@@ -42,8 +40,7 @@ if ($WhereAmI -eq $LinuxHome)
     $Sas = "$HomeMatt/salisburyandstonehenge.net"
   
 }
-else 
-{
+else {
     set-executionpolicy bypass -Scope Process
     
     
@@ -52,16 +49,13 @@ else
 
     $PowershellFolder = join-path "c:" "powershell"
 
-    if (test-path c:\matt\local\set-LocalEnvironment.ps1)
-    {
+    if (test-path c:\matt\local\set-LocalEnvironment.ps1) {
         . c:\matt\local\set-LocalEnvironment.ps1
     }
-    if (test-path 'C:\Program Files\Vim\vim80\gvim.exe')
-    {
+    if (test-path 'C:\Program Files\Vim\vim80\gvim.exe') {
         set-alias gvim 'C:\Program Files\Vim\vim80\gvim.exe'
     }
-    else
-    {
+    else {
         set-alias gvim 'C:\Program Files (x86)\Vim\vim80\gvim.exe'
     }
 
@@ -71,8 +65,6 @@ else
     $env:Path = "$env:Path;C:\Users\matty\AppData\Local\Programs\Git"
 
     
-    import-module WindowsStuff
-    import-module SqlStuff
         
 	
 }
@@ -80,8 +72,7 @@ else
 
 
 
-if ($WhereAmI -ne $WinWork)
-{
+if ($WhereAmI -ne $WinWork) {
     function cdhugo { cd $(Join-Path $HomeMatt "salisburyandstonehenge.net") }
     function cdodt { cd $(Join-Path $HomeMatt "salisburyandstonehenge.net/content/on-this-day") }
     function cdpic { cd $(Join-Path $HomeMatt "salisburyandstonehenge.net/static/images") }
@@ -96,20 +87,19 @@ if ($WhereAmI -ne $WinWork)
     #  $OLD = "/home/matt/sdcard/hugo/sites/example.com/content/on-this-day"
     $OTD = join-path $HomeMatt "salisburyandstonehenge.net/content/on-this-day"
 
-    $R="c:\matt\RescuedContent"
-    $RR="$R\roadnames"
-    $Rb="$R\books"
-    $Rg="$R\general"
-    $Rp="$R\photos"
-    $Rn="$R\salisbury-news"
-    $Rs="$R\stonehenge-2"
-    $Rt="$R\thingstodo"
+    $R = "c:\matt\RescuedContent"
+    $RR = "$R\roadnames"
+    $Rb = "$R\books"
+    $Rg = "$R\general"
+    $Rp = "$R\photos"
+    $Rn = "$R\salisbury-news"
+    $Rs = "$R\stonehenge-2"
+    $Rt = "$R\thingstodo"
     $Images = "C:\matt\salisburyandstonehenge.net\static\images"
 }
 
 
-if (!($PowershellFolder))
-{
+if (!($PowershellFolder)) {
     $PowershellFolder = "C:\Users\$Username\Documents\windowspowershell"
 }
 cd $PowershellFolder
@@ -121,49 +111,28 @@ $Scripts = join-path $PowershellFolder "Scripts"
 $Functions = join-path $PowershellFolder "Functions"
 set-alias ebook cdbook
 
-function cdmod {cd $Modules}
-function cdfun {cd $Functions}
-function cdscripts {cd $scripts}
-function cdwip {cd $PowershellFolder/work_in_progress}
-function cdph {cd $PowershellFolder/modules/PowerHugo}
-function cdbook {cd C:/Users/$Username/Documents/a-unix-persons-guide-to-powershell}
+function cdmod { cd $Modules }
+function cdfun { cd $Functions }
+function cdscripts { cd $scripts }
+function cdwip { cd $PowershellFolder/work_in_progress }
+function cdph { cd $PowershellFolder/modules/PowerHugo }
+function cdbook { cd C:/Users/$Username/Documents/a-unix-persons-guide-to-powershell }
 
-$FunctionsFolder = "$PowershellFolder/functions"
-
-$env:path = $env:path + ";" + $PowershellFolder + ";" + $FunctionsFolder
-write-debug  "4: <`$env:PSModulePath $env:PSModulePath>"
 
 
 $VerbosePreference = "Continue"
 
 
 
-write-verbose "About to load functions"
-foreach ($FUNC in $(select-string Autoload $FunctionsFolder/*.ps1))
-{
-
-  $FunctionToAutoload = $Func.Path
-  . $FunctionToAutoload
-}
-write-debug  "5: <`$env:PSModulePath $env:PSModulePath>"
-
-write-verbose "About to non-githubbed functions functions"
-foreach ($FUNC in $(select-string Autoload $UnGithubbedFunctionsFolder/*.ps1))
-{
-
-  $FunctionToAutoload = $Func.Path
-  . $FunctionToAutoload
-}
-write-debug  "6: <`$env:PSModulePath $env:PSModulePath>"
 
 function select-StringsFromCode {
-<#
+    <#
 .SYNOPSIS
 Searches for specified text in functions folder
 
 This function is autoloaded
 #>
-param ($SearchString)
+    param ($SearchString)
     select-string $SearchString $FunctionsFolder/*.ps1 | select path, line
     select-string $SearchString $Modules/*.psm1 | select path, line
     select-string $SearchString $UnGithubbedFunctionsFolder/*.ps1 | select path, line
@@ -179,36 +148,28 @@ $VerbosePreference = "SilentlyContinue"
 write-debug  "7: <`$env:PSModulePath $env:PSModulePath>"
 
 Import-Module z
-import-module PersonalStuff
+import-module MattsUtils
 import-module -force PSReadLine
+Set-PSReadLineOption -EditMode Vi
 
-function prompt { [string]$x=$pwd
-    $x = $x -replace '/home/matt',''
-    $x = $x -replace '/sdcard',''
-    $x = $x -replace 'c:\\matt\\salisburyandstonehenge.net','s.net'
-    $x = $x -replace '/salisburyandstonehenge.net','s.net'
-    $x = $x -replace 'content\\roadnames','roads'
-    $x = $x -replace '/mattypenny.net','s.net'
-    $x = $x -replace '/powershell/modules/PowerHugo','PH'
-    $x = $x -replace 'c:\\mattypenny.net\\','s.net'
-    $x = $x -replace 'C:\\powershell\\modules\\',''
-    $x = $x -replace 'PowerHugo','PH'
-    $x = $x -replace 'ConvertWordpressXmlToHugo','Conv'
+function prompt {
+    [string]$x = $pwd
+    $x = $x -replace '/home/matt', ''
+    $x = $x -replace '/sdcard', ''
+    $x = $x -replace 'c:\\matt\\salisburyandstonehenge.net', 's.net'
+    $x = $x -replace '/salisburyandstonehenge.net', 's.net'
+    $x = $x -replace 'content\\roadnames', 'roads'
+    $x = $x -replace '/mattypenny.net', 's.net'
+    $x = $x -replace '/powershell/modules/PowerHugo', 'PH'
+    $x = $x -replace 'c:\\mattypenny.net\\', 's.net'
+    $x = $x -replace 'C:\\powershell\\modules\\', ''
+    $x = $x -replace 'PowerHugo', 'PH'
+    $x = $x -replace 'ConvertWordpressXmlToHugo', 'Conv'
     "$x >"   
 }
 
 $Roads = "c:\salisburyandstonehenge.net\content\roadnames"
-        $Conv = 'C:\powershell\modules\ConvertWordpressXmlToHugo'
-        $HistoryFile = Join-Path $PowershellFolder -ChildPath 'history'
-        
-        $HistoryFile = Join-Path $HistoryFile -ChildPath 'ExportedHistory.xml'
-function export-history {
-    Get-History | Export-Clixml $HistoryFile 
-}
-
-set-alias ehh export-history
-set-alias eh export-history
-set-alias gh export-history
+$Conv = 'C:\powershell\modules\ConvertWordpressXmlToHugo'
 
 set-alias impo import-module
 
