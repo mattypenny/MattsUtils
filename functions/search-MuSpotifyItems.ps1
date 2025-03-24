@@ -2,11 +2,12 @@ import-module -force Spotishell
 function Search-MuSpotifyItems {
     <#
 .SYNOPSIS
-   xx
+   Search and return in more powershell-y format
 #>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $True)][string] $SearchString,
+        [int]$ShowFirstHits = 5,
         $applicationName = 'spotishell'
 
     )
@@ -51,6 +52,6 @@ function Search-MuSpotifyItems {
    
     write-endfunction
    
-    return $songs
+    return $songs | select-object -first $ShowFirstHits
    
 }
