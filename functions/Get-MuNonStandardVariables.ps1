@@ -1,7 +1,7 @@
 function Get-MuNonStandardVariables {
     <#
 .SYNOPSIS
-   xx
+   show the interesting variables...mainly for use in debug
 #>
     [CmdletBinding()]
     param (
