@@ -1,0 +1,77 @@
+
+Describe "PSScriptAnalyzer" {
+    $Exclusions = @(
+        @{ Type = 'message'; ExclusionString = 'write-endfunction'; ExclusionComment = "I've set write-endfunction as an alias to avoid changing it everywhere" }
+        @{ Type = 'message'; ExclusionString = 'write-startfunction'; ExclusionComment = "I've set write-endfunction as an alias to avoid changing it everywhere" }
+        @{ Type = 'rule'; ExclusionString = 'PSUseShouldProcessForStateChangingFunctions'; ExclusionComment = "Not enforcing PSUseShouldProcessForStateChangingFunctions because it seems to add complexity" }
+    )
+
+    $PowershellFiles = get-childitem -recurse *.ps*1,tests\*.ps*1
+    $Breaches = foreach ($F in $PowershellFiles) { 
+        Invoke-ScriptAnalyzer -Path $F
+    }
+
+    $NonExcludedBreaches = foreach ($B in $Breaches) {
+        $BreachMessage = $B.Message
+        $BreachRuleName = $B.RuleName
+
+        $Excluded = $False
+        foreach ($E in $Exclusions) {
+
+            if ($E.Type -eq 'message') {
+                $ExclusionString = $E.ExclusionString
+                if ($BreachMessage -like "*$ExclusionString*") {
+                    $Excluded = $True
+                }
+            }
+
+            if ($E.Type -eq 'rule') {
+                $ExclusionRule = $E.ExclusionString
+                if ($BreachRuleName -eq $ExclusionRule) {
+                    $Excluded = $True
+                }
+            }
+
+        }
+
+        if ($Excluded) {
+        } else {
+            $B
+        }
+
+    }
+
+    It -testCases $Exclusions "Excluding checks where the <Type> is or includes <ExclusionString> because <ExclusionComment>" {
+        $True | Should -Be $True
+    }
+
+    $TestCases = @{
+        NonExcludedBreaches = $NonExcludedBreaches
+    }
+
+    It -testcases $TestCases "There should be no non-excluded actionable breaches" {
+        $NonExcludedBreaches | Should -HaveCount 0
+    }
+
+    foreach ($N in $NonExcludedBreaches) {
+        $TestCases = @{
+            RuleName = $N.RuleName
+            Severity = $N.Severity
+            ScriptName = $N.ScriptName
+            Line  = $N.Line
+            Message = $N.Message
+        }
+        It -testcases $TestCases "<RuleName> breached - <Severity> <ScriptName> <Line> <Message>" {
+            $True | Should -Be $False
+        }
+
+    }
+
+}
+<#
+    $PowershellFiles = get-childitem -recurse *.ps*1,tests\*.ps*1
+    $Breaches = foreach ($F in $PowershellFiles) { 
+        Invoke-ScriptAnalyzer -Path $F
+    }
+    $Breaches | ft -a
+#>

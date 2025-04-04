@@ -1,0 +1,51 @@
+param (
+    $FunctionString = "*"
+)
+. $env:PsRoot\scripts\StandardPesterTests\tests\HelperFunctions.ps1
+
+$OriginalLocation = Get-Location
+
+
+
+
+. $env:PsRoot\scripts\StandardPesterTests\tests\Get-ListOfFunctionsDefinedInFolderFiles.ps1
+
+$ListOfFunctions = Get-ListOfFunctionsDefinedInFolderFiles -folder $(Get-Location)
+$ListOfFunctions = $ListOfFunctions | select-string "$FunctionString"
+$ListOfFunctionsCount = $( $ListOfFunctions | measure-object).count
+write-dbg "`$ListOfFunctionsCount: <$ListOfFunctionsCount>"
+
+Describe "Synopsis for $ListOfFunctionsCount functions discovered" {
+    foreach ($Cmdlet in $ListOfFunctions) {
+
+        write-host "`$Cmdlet: <$Cmdlet>"
+        $Help = get-help $Cmdlet
+
+        if ($Help) {
+            $HelpExists = $True
+        } else {
+            $HelpExists = $False
+        }
+
+        [string]$Synopsis = $Help.Synopsis
+
+        It "$Cmdlet must have some help" {
+            $HelpExists | Should Be $True
+        }
+
+        If ($HelpExists) {
+            It "$Cmdlet has a proper synopsis: $synopsis" {
+
+                $Synopsis | Should Not Be $Null
+                $Synopsis | Should Not be 'xx'
+
+                $LineLooksLikeDefaultSynopsis = $Synopsis | Select-string '\[\['
+
+                $LineLooksLikeDefaultSynopsis | Should Be $null
+            }
+        }
+    }
+}
+
+
+Set-Location $OriginalLocation
