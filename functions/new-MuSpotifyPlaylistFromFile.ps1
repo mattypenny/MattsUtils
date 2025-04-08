@@ -9,7 +9,7 @@ function New-MuSpotifyPlaylistFromFile {
         [Parameter(Mandatory = $True)][string]$PlaylistName,
         [string]$ApplicationName = 'spotishell',
         [string]$PlaylistFolder = 'Created by spotishell',
-        [string]$PlaylistDescription = 'Created from file $FileName on $(get-date)'
+        [string]$PlaylistDescription = "Created from file $FileName on $(get-date)"
     )
    
     $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
@@ -17,7 +17,7 @@ function New-MuSpotifyPlaylistFromFile {
     write-startfunction
    
     # create the playlist
-    <#
+    
     $NewPlaylistParams = @{
         PlaylistName        = $PlaylistName
         ApplicationName     = $ApplicationName
@@ -25,7 +25,7 @@ function New-MuSpotifyPlaylistFromFile {
         PlaylistDescription = $PlaylistDescription
     }
     $playlist = New-MuSpotifyPlaylist @NewPlaylistParams
-    #>
+   
 
     # reading the file
     $fileContent = Get-Content $FileName
@@ -57,16 +57,38 @@ function New-MuSpotifyPlaylistFromFile {
         $Artist = $SelectedTrack.artist
         write-host -ForegroundColor Green "$Track $Artist $TrackId"
 
-        # ask the user to select the track
-
-        # add the track to the playlist
-        # $track[$trackNumber] # | Add-MuSpotifyTrackToPlaylist -PlaylistName $PlaylistName -ApplicationName $ApplicationName -PlaylistFolder $PlaylistFolder -PlaylistDescription $PlaylistDescription
+        Add-MuSpotifyTrackToPlaylist -PlaylistId $playlist.Id -TrackId $TrackId
     }
     write-endfunction
    
    
 }
 
+function New-MuSpotifyPlaylist {
+    <#
+.SYNOPSIS
+   xx
+#>
+    [CmdletBinding()]
+    param (
+        $ApplicationName     ,
+        $PlaylistDescription ,
+        $PlaylistFolder      ,
+        $PlaylistName        
+    )
+   
+    $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+    write-startfunction
+   
+    $Playlist = New-Playlist -UserId (Get-CurrentUserProfile).id -Name
+   
+    write-dbg "`$Playlist count: <$($Playlist.Length)>"
+    write-endfunction
+   
+    return $Playlist
+   
+}
 function Add-MuSpotifyTrackToPlaylist {
     <#
 .SYNOPSIS
@@ -74,6 +96,8 @@ function Add-MuSpotifyTrackToPlaylist {
 #>
     [CmdletBinding()]
     param (
+        [Parameter(Mandatory = $True)][string]$PlaylistId,
+        [Parameter(Mandatory = $True)][string]$TrackId
    
     )
    
@@ -81,8 +105,17 @@ function Add-MuSpotifyTrackToPlaylist {
    
     write-startfunction
    
-   
+    try {
+        Add-PlaylistItem -Id PlaylistId -ItemId TrackId
+        $TrackAdded = $True
+    }
+    catch {
+        write-error "Error adding track to playlist: $_"
+        $TrackAdded = $False
+    }
     write-endfunction
+
+    return $TrackAdded
    
    
 }
