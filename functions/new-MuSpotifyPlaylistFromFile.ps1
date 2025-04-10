@@ -33,6 +33,16 @@ function New-MuSpotifyPlaylistFromFile {
     # for each line in the file, search for the track, output the list of tracks with an sequence number, and the
     # user can select which track best matches the line in the file (or none)
     $tracks = foreach ($line in $fileContent) {
+
+        if (!($line)) {
+            continue
+        }
+        if ($line -match '^\s*#') {
+            continue
+        }
+        if ($line -match '^\s*$') {
+            continue
+        }
         write-host $line
         $SplatParameters = @{
             SearchString    = $line
@@ -55,9 +65,9 @@ function New-MuSpotifyPlaylistFromFile {
         $TrackId = $SelectedTrack.trackid
         $Track = $SelectedTrack.track
         $Artist = $SelectedTrack.artist
-        write-host -ForegroundColor Green "$Track $Artist $TrackId"
+        write-dbg "User selected: <$Track> by <$Artist> which has a Spotty id of <$TrackId>"
 
-        Add-MuSpotifyTrackToPlaylist -PlaylistId $playlist.Id -TrackId $TrackId
+        Add-MuSpotifyTrackToPlaylist -PlaylistId $playlist.Id -TrackId $SelectedTrack.TrackId -ApplicationName $ApplicationName
     }
     write-endfunction
    
@@ -81,7 +91,7 @@ function New-MuSpotifyPlaylist {
    
     write-startfunction
    
-    $Playlist = New-Playlist -UserId (Get-CurrentUserProfile).id -Name
+    $Playlist = New-Playlist -UserId (Get-CurrentUserProfile -ApplicationName $ApplicationName).id -Name $PlaylistName -Description $PlaylistDescription -ApplicationName $ApplicationName
    
     write-dbg "`$Playlist count: <$($Playlist.Length)>"
     write-endfunction
@@ -96,8 +106,9 @@ function Add-MuSpotifyTrackToPlaylist {
 #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory = $True)][string]$PlaylistId,
-        [Parameter(Mandatory = $True)][string]$TrackId
+        [Parameter(Mandatory = $True)]$PlaylistId,
+        [Parameter(Mandatory = $True)]$TrackId,
+        [Parameter(Mandatory = $True)][string]$ApplicationName 
    
     )
    
@@ -105,8 +116,24 @@ function Add-MuSpotifyTrackToPlaylist {
    
     write-startfunction
    
+    if ($PlaylistId -notmatch '^[a-zA-Z0-9]{22}$') {
+        write-dbg "Invalid PlaylistId: <$PlaylistId>"
+        throw "Invalid PlaylistId: <$PlaylistId>"
+    }
+    else {
+        write-dbg "PlaylistId OK: <$PlaylistId>"
+    }
+    if ($TrackId -notmatch '^[a-zA-Z0-9]{22}$') {
+        write-dbg "Invalid TrackId: <$TrackId>"
+        throw "Invalid TrackId: <$TrackId>"
+    }
+    else {
+        write-dbg "TrackId OK: <$TrackId>"
+    }
+
     try {
-        Add-PlaylistItem -Id PlaylistId -ItemId TrackId
+        write-dbg "Adding track <$TrackId> to playlist <$PlaylistId> with application name <$ApplicationName>"
+        Add-PlaylistItem -Id $PlaylistId -ItemId $TrackId -ApplicationName $ApplicationName
         $TrackAdded = $True
     }
     catch {
