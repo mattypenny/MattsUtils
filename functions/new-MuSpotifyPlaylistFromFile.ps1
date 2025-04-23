@@ -1,7 +1,13 @@
 function New-MuSpotifyPlaylistFromFile {
     <#
 .SYNOPSIS
-   xx
+   Read a file containing a list of tracks, and create a playlist from the tracks in the file. 
+.DESCRIPTION
+    Read a file containing a list of tracks, and create a playlist from the tracks in the file. 
+    The user will be prompted to select the correct track from a list of tracks that match the search string.
+.EXAMPLE
+    New-MuSpotifyPlaylistFromFile -FileName 'C:\temp\BestPsychobilly.txt' -PlaylistName 'Best Psychobilly'
+    This will create a playlist called 'Best Psychobilly' from the tracks in the file 'C:\temp\BestPsychobilly.txt'
 #>
     [CmdletBinding()]
     param (
@@ -43,7 +49,7 @@ function New-MuSpotifyPlaylistFromFile {
         if ($line -match '^\s*$') {
             continue
         }
-        write-host $line
+        write-dbg "`$line: <$line>"
         $SplatParameters = @{
             SearchString    = $line
             ShowFirstHits   = 5
@@ -51,23 +57,28 @@ function New-MuSpotifyPlaylistFromFile {
         }
         $track = Search-MuSpotifyItems @SplatParameters
 
-        $SelectedTrack = $track | select -Property @{Label = 'Line'
-            expression                                     = { 
+        $SelectedTrack = $track | select  track,
+        artist,
+        album,
+        released,  
+        @{Label        = 'Line'
+            expression = { 
                 $line 
             } 
         },
-        track,
-        artist,
-        album,
-        released, 
         trackid | Out-GridView -OutputMode Single
         
-        $TrackId = $SelectedTrack.trackid
-        $Track = $SelectedTrack.track
-        $Artist = $SelectedTrack.artist
-        write-dbg "User selected: <$Track> by <$Artist> which has a Spotty id of <$TrackId>"
+        if ($SelectedTrack) {
+            $TrackId = $SelectedTrack.trackid
+            $Track = $SelectedTrack.track
+            $Artist = $SelectedTrack.artist
+            write-dbg "User selected: <$Track> by <$Artist> which has a Spotty id of <$TrackId>"
 
-        Add-MuSpotifyTrackToPlaylist -PlaylistId $playlist.Id -TrackId $SelectedTrack.TrackId -ApplicationName $ApplicationName
+            Add-MuSpotifyTrackToPlaylist -PlaylistId $playlist.Id -TrackId $SelectedTrack.TrackId -ApplicationName $ApplicationName
+        }
+        else {
+            write-dbg "User did not select a track for line <$line>"
+        }
     }
     write-endfunction
    
