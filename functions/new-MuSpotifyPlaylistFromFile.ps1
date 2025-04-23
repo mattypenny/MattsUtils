@@ -132,6 +132,7 @@ function Add-MuSpotifyTrackToPlaylist {
     }
 
     try {
+        $TrackId = "spotify:track:$TrackId"
         write-dbg "Adding track <$TrackId> to playlist <$PlaylistId> with application name <$ApplicationName>"
         Add-PlaylistItem -Id $PlaylistId -ItemId $TrackId -ApplicationName $ApplicationName
         $TrackAdded = $True
