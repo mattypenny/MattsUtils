@@ -66,7 +66,7 @@ function New-MuSpotifyPlaylistFromFile {
                 $line 
             } 
         },
-        trackid | Out-GridView -OutputMode Single
+        trackid | Out-GridView -OutputMode Single -Title "Select track for line <$line>" 
         
         if ($SelectedTrack) {
             $TrackId = $SelectedTrack.trackid
