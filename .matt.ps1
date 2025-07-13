@@ -393,3 +393,5 @@ import-module Pester
 $PesterPreference = [PesterConfiguration]::Default
 
 $PesterPreference.Output.Verbosity = 'Detailed'
+
+set-alias gvim gvim.bat
