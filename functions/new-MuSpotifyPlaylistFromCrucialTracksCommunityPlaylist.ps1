@@ -16,8 +16,14 @@ function New-MuSpotifyPlaylistFromCrucialTracksCommunityPlaylist {
     [string]$WebPageContent = $WebPage.Content
     write-dbg "`$WebPageContent count: <$($WebPageContent.Length)>"
 
-    $WebPageContent = $WebPageContent -split "`r?`n"
-   
+    $WebPageContent | convertfrom-html  | ? innerhtml -like '*<div class="font-medium text-xl">*' | select @{L = 'song'; E = { $_.innertext.trim() } }
+    [string]$InnerHtml = $($WebPageContent  | convertfrom-html).innerhtml
+    [string[]]$HtmlLines = $InnerHtml -split "`n"
+    $Songs = $HtmlLines | ? { $_ -like '*<div class="font-medium text-xl">*' }
+    write-dbg "`$Songs count: <$($Songs.Length)>"
+    $Songs
+
+    <#
     $Songs = $WebPageContent | select-string 'text-xl' -Context 0, 1  
     write-dbg "`$Songs count: <$($Songs.Length)>"
 
@@ -34,6 +40,7 @@ function New-MuSpotifyPlaylistFromCrucialTracksCommunityPlaylist {
         write-dbg "`$ArtistLine: <$ArtistLine>"
     }
     write-endfunction
+    #>
    
    
 }
