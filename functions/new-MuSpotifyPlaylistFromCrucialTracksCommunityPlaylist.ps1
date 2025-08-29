@@ -16,12 +16,30 @@ function New-MuSpotifyPlaylistFromCrucialTracksCommunityPlaylist {
     [string]$WebPageContent = $WebPage.Content
     write-dbg "`$WebPageContent count: <$($WebPageContent.Length)>"
 
-    $WebPageContent | convertfrom-html  | ? innerhtml -like '*<div class="font-medium text-xl">*' | select @{L = 'song'; E = { $_.innertext.trim() } }
     [string]$InnerHtml = $($WebPageContent  | convertfrom-html).innerhtml
     [string[]]$HtmlLines = $InnerHtml -split "`n"
-    $Songs = $HtmlLines | ? { $_ -like '*<div class="font-medium text-xl">*' }
-    write-dbg "`$Songs count: <$($Songs.Length)>"
-    $Songs
+    $FoundSong = $False
+    foreach ($line in $HtmlLines) {
+        $line = $line.trim()
+        if ($FoundSong) {
+            $ArtistLine = $line
+            $FoundSong = $False
+
+            $Artist = Get-MuTextFromHtmlLine -HtmlLine $ArtistLine
+            $Song = Get-MuTextFromHtmlLine -HtmlLine $SongLine
+            [PSCustomObject]@{
+                ArtistLine = $ArtistLine
+                SongLine   = $SongLine
+                Artist     = $Artist
+                Song       = $Song
+                ArtistSong = "$Artist - $Song"
+            }
+        }
+        if ($line -like '*<div class="font-medium text-xl">*') {
+            $SongLine = $line
+            $FoundSong = $True
+        }
+    }
 
     <#
     $Songs = $WebPageContent | select-string 'text-xl' -Context 0, 1  
@@ -42,5 +60,29 @@ function New-MuSpotifyPlaylistFromCrucialTracksCommunityPlaylist {
     write-endfunction
     #>
    
+   
+}
+
+function Get-MuTextFromHtmlLine {
+    <#
+.SYNOPSIS
+   Extract text from an HTML line, like <div class="text-zinc-600 dark:text-zinc-400">Bethany Eve</div> 
+#>
+    [CmdletBinding()]
+    param (
+        [string]$HtmlLine
+    )
+   
+    $DebugPreference = $PSCmdlet.GetVariableValue('DebugPreference')
+   
+    write-startfunction
+   
+    if ($HtmlLine -match '>(.*?)<') {
+        $text = $matches[1]
+    }
+   
+    write-endfunction
+   
+    return $text
    
 }
