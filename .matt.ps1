@@ -167,7 +167,6 @@ if (!($PowershellFolder))
 
 }
 
-cd $PowershellFolder
 
 
 
