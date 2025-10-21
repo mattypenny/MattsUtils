@@ -226,16 +226,6 @@ $VerbosePreference = "Continue"
 
 write-verbose "About to load functions"
 
-foreach ($FUNC in $(select-string Autoload $FunctionsFolder/*.ps1))
-{
-
-
-
-    $FunctionToAutoload = $Func.Path
-
-    . $FunctionToAutoload
-
-}
 
 
 
@@ -283,9 +273,11 @@ $VerbosePreference = "SilentlyContinue"
 
 Import-Module z
 
-import-module PersonalStuff
+# import-module PersonalStuff
 
-import-module WindowsStuff
+# import-module WindowsStuff
+
+import-module MattsUtils
 
 import-module -force PSReadLine
 
